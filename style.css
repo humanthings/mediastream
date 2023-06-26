@@ -1,0 +1,15 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: black;
+}
+
+video {
+  /* object-fit: cover; */
+  width: 100%;
+  /* margin-top: auto;
+  margin-bottom: auto; */
+}
