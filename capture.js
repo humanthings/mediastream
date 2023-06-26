@@ -1,6 +1,6 @@
 const video = document.getElementById("video");
 
-function startup() {
+function triggerAccessPrompt() {
   // Trigger access of video and audio access right prompt to users
   // https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Build_a_phone_with_peerjs/Connect_peers/Get_microphone_permission
   // can't set the video property in the other section, so set them here
@@ -16,13 +16,15 @@ function startup() {
     })
     .then((stream) => {
       window.localStream = stream; // A
-      window.localAudio.srcObject = stream; // B
-      window.localAudio.autoplay = true; // C
+      // window.localAudio.srcObject = stream; // B
+      // window.localAudio.autoplay = true; // C
     })
     .catch((err) => {
       console.error(`you got an error: ${err}`);
     });
+}
 
+function setShadowCast() {
   navigator.mediaDevices
     .enumerateDevices()
     .then((devices) => {
@@ -35,13 +37,13 @@ function startup() {
           // Get the audio ID
           if (device.kind === "audioinput") {
             audioDeviceId = device.deviceId;
-            // console.log(audioDeviceId);
+            console.log(audioDeviceId);
           }
 
           // Get the video ID
           if (device.kind === "videoinput") {
             videoDeviceId = device.deviceId;
-            // console.log(videoDeviceId);
+            console.log(videoDeviceId);
           }
         }
       });
@@ -67,12 +69,29 @@ function startup() {
         .then((stream) => {
           video.srcObject = stream;
           video.play(); // Must not use the autoplay attribute in html
+          console.log("video started");
         })
         .catch(console.error);
     })
     .catch((err) => {
       console.error(`${err.name}: ${err.message}`);
     });
+}
+
+function startup() {
+  navigator.permissions.query({ name: "microphone" }).then(function (result) {
+    if (result.state == "granted") {
+      setShadowCast();
+    } else {
+      triggerAccessPrompt();
+    }
+    result.onchange = function () {
+      console.log(result.state);
+      if (result.state == "granted") {
+        setShadowCast();
+      }
+    };
+  });
 }
 
 window.addEventListener("load", startup, false);
