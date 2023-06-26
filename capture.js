@@ -1,7 +1,10 @@
 const video = document.getElementById("video");
 
 function startup() {
-  // Trigger access of video and audio access right
+  // Trigger access of video and audio access right prompt to users
+  // https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Build_a_phone_with_peerjs/Connect_peers/Get_microphone_permission
+  // can't set the video property in the other section, so set them here
+  //
   navigator.mediaDevices
     .getUserMedia({
       video: {
@@ -44,6 +47,7 @@ function startup() {
       });
     })
     .then(() => {
+      // from https://github.com/humanthings/genki-arcade-web/blob/master/src/hooks/useMediaStream.ts#L61
       navigator.mediaDevices
         .getUserMedia({
           audio: {
