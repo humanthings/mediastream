@@ -5,11 +5,32 @@
 
 body {
   background-color: black;
+  width: 100vw;
+  height: 100vh;
+  background-size: cover;
 }
 
 video {
   /* object-fit: cover; */
-  width: 100%;
+  position: absolute;
+  /* top: 0;
+  left: 0; */
+  z-index: -1;
+  height: 100vh;
+  width: 100vw;
   /* margin-top: auto;
   margin-bottom: auto; */
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
+  color: white;
+  position: relative;
+  /* position: absolute; */
+  /* margin-bottom: 100px; */
+}
+
+.material-symbols-outlined:hover {
+  color: red;
+  cursor: pointer;
 }
