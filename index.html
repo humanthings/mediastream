@@ -10,17 +10,188 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ffmpeg/0.11.6/ffmpeg.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"
+      type="text/javascript"
+    ></script>
     <script async src="capture.js"></script>
   </head>
   <body>
     <div>
       <video id="video">Video stream not avaiable</video>
-      <span
+      <!-- <span
         class="material-symbols-outlined"
         onclick="openFullscreen(); return false"
       >
         fullscreen
       </span>
+      <button id="btn_start_record" onclick="startRecord();">
+        Start Record
+      </button>
+      <button
+        id="btn_stop_record"
+        onclick="stopRecord();"
+        style="visibility: hidden"
+      >
+        Stop Record
+      </button> -->
+
+      <!-- Remarked to disable the example of ffmpeg -->
+      <!-- <video id="player" controls></video>
+      <input type="file" id="uploader" /> -->
+
+      <div class="settings--container" style="left: 0; visibility: visible">
+        <div style="height: 5"></div>
+
+        <div class="settings-item--container">
+          <div class="settings-item--header">
+            <div class="settings-item--header-title">Mode</div>
+            <img src="./assets/icons/arrow_down.svg" />
+          </div>
+          <div>
+            <div
+              class="settings-item--list-item"
+              style="color: rgb(240, 83, 72)"
+            >
+              Favor Perfomance
+            </div>
+            <div
+              class="settings-item--list-item"
+              style="color: rgba(255, 255, 255, 0.8)"
+            >
+              Favor Resolution
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-item--container">
+          <div class="settings-item--header">
+            <div class="settings-item--header-title">Microphone</div>
+            <img src="./assets/icons/arrow_down.svg" />
+          </div>
+          <div class="settings-item--list-item">
+            Default - External Microphone (Built-in)
+          </div>
+        </div>
+
+        <div class="settings-item--container">
+          <div class="settings-item--header">
+            <div class="settings-item--header-title">Volume</div>
+          </div>
+
+          <br />
+
+          <input
+            type="range"
+            min="1"
+            max="100"
+            value="50"
+            style="width: 100%; height: 4px; background-color: grey"
+          />
+        </div>
+        <br />
+
+        <div class="settings-item--container">
+          <div class="settings-item--header">
+            <div class="settings-item--header-title">Credits</div>
+          </div>
+        </div>
+
+        <div class="settings-item--container">
+          <div class="settings-item--header">
+            <div class="settings-item--header-title">Language</div>
+            <img src="./assets/icons/arrow_down.svg" />
+          </div>
+          <div class="settings-item--list-item">English</div>
+        </div>
+
+        <div class="controls--container" style="visibility: visible">
+          <div class="controls--icon-container">
+            <img src="./assets/icons/settings.svg" class="controls--icon" />
+          </div>
+          <div class="controls--icon-container">
+            <img
+              src="./assets/icons/screenshot_active.svg"
+              class="controls--icon"
+            />
+          </div>
+          <div class="controls--icon-container">
+            <img src="./assets/icons/mic.svg" class="controls--icon" />
+          </div>
+          <div class="controls--icon-container">
+            <img src="./assets/icons/record.svg" class="controls--icon" />
+          </div>
+          <div class="controls--icon-container">
+            <img
+              src="./assets/icons/fullscreen.svg"
+              class="controls--icon"
+              style="width: 50px; height: 50px"
+            />
+          </div>
+          <!-- <div class="controls--icon-container">
+            <img src="./assets/icons/fullscreen.svg" class="controls--icon" />
+          </div> -->
+        </div>
+      </div>
+
+      <div
+        id="btn_sologans"
+        style="
+          max-width: 30vw;
+          position: absolute;
+          top: 50px;
+          left: 50px;
+          flex-direction: column;
+          background: rgba(0, 0, 0, 0.3);
+          backdrop-filter: blur(10px);
+          color: white;
+          font-family: UbuntuMedium;
+          font-size: 18px;
+          padding: 30px;
+          visibility: hidden;
+        "
+      >
+        “Help share the MAGIC”
+        <div
+          style="
+            padding-top: 10px;
+            font-family: UbuntuItalic;
+            font-size: 18px;
+            text-align: right;
+          "
+        >
+          - Tetra
+        </div>
+      </div>
+
+      <div
+        id="btn_go_to_website"
+        style="
+          position: absolute;
+          right: 0px;
+          top: 0px;
+          height: 46px;
+          background: rgb(240, 83, 72);
+          padding-left: 40px;
+          padding-right: 40px;
+          color: white;
+          font-family: UbuntuMedium;
+          font-size: 18px;
+          text-transform: uppercase;
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          visibility: hidden;
+        "
+      >
+        Go To Website
+      </div>
+
+      <div style="position: absolute; z-index: 99; width: 300px">
+        <div></div>
+      </div>
     </div>
   </body>
 </html>

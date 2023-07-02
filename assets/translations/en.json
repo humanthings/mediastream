@@ -1,0 +1,13 @@
+{
+  "MODE": "Mode",
+  "RESOLUTION": "Resolution",
+  "FRAMERATE": "Framerate",
+  "MICROPHONE": "Microphone",
+  "VOLUME": "Volume",
+  "SAVE_LOCATION": "Save Directory",
+  "FAVOR_PERFOMANCE": "Favor Perfomance",
+  "FAVOR_RESOLUTION": "Favor Resolution",
+  "NOT_SELECTED": "Not Selected",
+  "LANGUAGE": "Language",
+  "CREDITS": "Credits"
+}

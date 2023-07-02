@@ -1,0 +1,13 @@
+{
+  "MODE": "模式",
+  "RESOLUTION": "解析度",
+  "FRAMERATE": "帧数",
+  "MICROPHONE": "麦克风",
+  "VOLUME": "音量",
+  "SAVE_LOCATION": "直接保存",
+  "FAVOR_PERFOMANCE": "偏向性能",
+  "FAVOR_RESOLUTION": "偏向画质",
+  "NOT_SELECTED": "无选项",
+  "LANGUAGE": "语言",
+  "CREDITS": "致谢"
+}

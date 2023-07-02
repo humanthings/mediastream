@@ -2,9 +2,13 @@
 // https://www.youtube.com/watch?v=Hc7GE3ENz7k
 
 const video = document.getElementById("video");
-document.body.style.backgroundImage = "url('background.jpg')";
-audioDeviceId = null;
-videoDeviceId = null;
+document.body.style.backgroundImage = "url('./assets/images/background.jpg')";
+let audioDeviceId = null;
+let videoDeviceId = null;
+// For Video recording
+let chunks = [];
+let mediaRecorder;
+let mediaStream;
 
 function triggerAccessPrompt() {
   // Trigger access of video and audio access right prompt to users
@@ -13,23 +17,38 @@ function triggerAccessPrompt() {
   //
   navigator.mediaDevices
     .getUserMedia({
-      video: {
-        width: { ideal: 1920 },
-        height: { ideal: 1080 },
-        frameRate: { ideal: 60 },
-      },
+      video: true,
+      // {
+      //   width: { ideal: 1920 },
+      //   height: { ideal: 1080 },
+      //   frameRate: { ideal: 60 },
+      // },
       audio: true,
     })
     .then((stream) => {
+      console.log("stream intialized");
       window.localStream = stream; // A
       // Avoid error of srcObject not defined.
       // window.localAudio.srcObject = stream; // B
       // window.localAudio.autoplay = true; // C
+
+      // Must clear the stream first before the resolution can be changed later.
+      stream.getTracks().forEach((track) => track.stop());
+      console.log("stream stopped");
     })
     .catch((err) => {
       console.error(`you got an error: ${err}`);
     });
 }
+
+// function stopStreamedVideo(videoElem) {
+//   // https://stackoverflow.com/questions/11642926/stop-close-webcam-which-is-opened-by-navigator-getusermedia
+//   let stream = videoElem.srcObject;
+//   let tracks = stream.getTracks();
+//   tracks.forEach(function (track) {
+//     track.stop();
+//   });
+// }
 
 function setShadowCast() {
   audioDeviceId = null;
@@ -71,20 +90,27 @@ function setShadowCast() {
           },
           video: {
             deviceId: videoDeviceId,
-            width: { ideal: 1920 },
-            height: { ideal: 1080 },
+            width: { ideal: 720 },
+            height: { ideal: 480 },
             frameRate: { ideal: 60 },
           },
         })
         .then((stream) => {
           if (audioDeviceId && videoDeviceId) {
             video.srcObject = stream;
+
             document.body.style.backgroundImage = "none";
-            video.style.display = "block";
+            video.style.display = "block"; // Display the video container
+
             video.play(); // Must not use the autoplay attribute in html
+
             console.log("video started");
+
+            // Set mediaStram global variable
+            mediaStream = stream;
           } else {
-            document.body.style.backgroundImage = "url('background.jpg')";
+            document.body.style.backgroundImage =
+              "url('./assets/images/background.jpg')";
             video.style.display = "none";
             console.log("Can't find the ShadowCast device");
           }
@@ -106,7 +132,107 @@ function openFullscreen() {
   }
 }
 
+//
+// https://dev.to/ethand91/mediarecorder-api-tutorial-54n8
+//
+const startRecord = async () => {
+  const mimeType = "video/webm;codecs=vp8,opus";
+
+  if (!MediaRecorder.isTypeSupported(mimeType)) {
+    alert("vp8/opus mime type is not supported");
+
+    return;
+  }
+
+  const options = {
+    audioBitsPerSecond: 128000,
+    mimeType,
+    videoBitsPerSecond: 2500000,
+  };
+
+  // const mediaStream = await getLocalMediaStream();
+
+  // Get mediaStream from global variable
+  mediaRecorder = new MediaRecorder(mediaStream, options);
+
+  setListeners();
+
+  mediaRecorder.start(1000);
+
+  // Invisible btn_start_record
+  document.getElementById("btn_start_record").style.visibility = "hidden";
+  document.getElementById("btn_stop_record").style.visibility = "visible";
+};
+
+const setListeners = () => {
+  mediaRecorder.ondataavailable = handleOnDataAvailable;
+  mediaRecorder.onstop = handleOnStop;
+};
+
+const handleOnDataAvailable = ({ data }) => {
+  if (data.size > 0) {
+    chunks.push(data);
+  }
+};
+
+const handleOnStop = () => {
+  saveFile();
+
+  destroyListeners();
+  mediaRecorder = undefined;
+};
+
+const destroyListeners = () => {
+  mediaRecorder.ondataavailable = undefined;
+  mediaRecorder.onstop = undefined;
+};
+
+const stopRecord = async () => {
+  if (!mediaRecorder) return;
+
+  mediaRecorder.stop();
+
+  // Invisible btn_start_record
+  document.getElementById("btn_start_record").style.visibility = "visible";
+  document.getElementById("btn_stop_record").style.visibility = "hidden";
+};
+
+const saveFile = () => {
+  const blob = new Blob(chunks);
+
+  const blobUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.style = "display: none";
+  link.href = blobUrl;
+  link.download = "recorded_file.webm";
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  window.URL.revokeObjectURL(blobUrl);
+  chunks = [];
+};
+
 function startup() {
+  // Remarked to disable the example of ffmpeg
+
+  // const { createFFmpeg, fetchFile } = FFmpeg;
+  // const ffmpeg = createFFmpeg({ log: true });
+  // const transcode = async ({ target: { files } }) => {
+  //   const { name } = files[0];
+  //   await ffmpeg.load();
+  //   ffmpeg.FS("writeFile", name, await fetchFile(files[0]));
+  //   await ffmpeg.run("-i", name, "output.mp4");
+  //   const data = ffmpeg.FS("readFile", "output.mp4");
+  //   const video = document.getElementById("player");
+  //   video.src = URL.createObjectURL(
+  //     new Blob([data.buffer], { type: "video/mp4" })
+  //   );
+  // };
+  // document.getElementById("uploader").addEventListener("change", transcode);
+
   navigator.permissions
     .query({ name: "microphone" || "camera" })
     .then(function (result) {

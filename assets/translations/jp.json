@@ -1,0 +1,13 @@
+{
+  "MODE": "動作モード",
+  "RESOLUTION": "解像度",
+  "FRAMERATE": "フレームノート",
+  "MICROPHONE": "マイク設定",
+  "VOLUME": "音量設定",
+  "SAVE_LOCATION": "ファイルの保存場所",
+  "FAVOR_PERFOMANCE": "動作軽快モード",
+  "FAVOR_RESOLUTION": "解像度優先モード",
+  "NOT_SELECTED": "選択されていません",
+  "LANGUAGE": "Language",
+  "CREDITS": "Credits"
+}

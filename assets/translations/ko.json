@@ -1,0 +1,13 @@
+{
+  "MODE": "MODE",
+  "RESOLUTION": "해상도",
+  "FRAMERATE": "프레임 속도",
+  "MICROPHONE": "마이크",
+  "VOLUME": "음량",
+  "SAVE_LOCATION": "파일 저장 장소",
+  "FAVOR_PERFOMANCE": "퍼포먼스 모드",
+  "FAVOR_RESOLUTION": "해상도 모드",
+  "NOT_SELECTED": "선택되지 않음",
+  "LANGUAGE": "Language",
+  "CREDITS": "Credits"
+}
