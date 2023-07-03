@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ShadowCast</title>
     <link rel="stylesheet" href="style.css" type="text/css" />
-    <link
+    <!-- <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ffmpeg/0.11.6/ffmpeg.min.js"></script>
+    /> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/ffmpeg/0.11.6/ffmpeg.min.js"></script> -->
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"
       type="text/javascript"
@@ -45,28 +45,15 @@
         <div style="height: 5"></div>
 
         <div class="settings-item--container">
-          <div class="settings-item--header">
+          <div class="settings-item--header" onclick="onModeDropdown()">
             <div class="settings-item--header-title">Mode</div>
-            <img src="./assets/icons/arrow_down.svg" />
+            <img id="mode-arrow" src="./assets/icons/arrow_down.svg" />
           </div>
-          <div>
-            <div
-              class="settings-item--list-item"
-              style="color: rgb(240, 83, 72)"
-            >
-              Favor Perfomance
-            </div>
-            <div
-              class="settings-item--list-item"
-              style="color: rgba(255, 255, 255, 0.8)"
-            >
-              Favor Resolution
-            </div>
-          </div>
+          <div id="mode-items"></div>
         </div>
 
         <div class="settings-item--container">
-          <div class="settings-item--header">
+          <div class="settings-item--header" onclick="onChangeInput()">
             <div class="settings-item--header-title">Microphone</div>
             <img src="./assets/icons/arrow_down.svg" />
           </div>
@@ -87,7 +74,7 @@
             min="1"
             max="100"
             value="50"
-            style="width: 100%; height: 4px; background-color: grey"
+            style="width: 100%; height: 2px"
           />
         </div>
         <br />
@@ -111,10 +98,7 @@
             <img src="./assets/icons/settings.svg" class="controls--icon" />
           </div>
           <div class="controls--icon-container">
-            <img
-              src="./assets/icons/screenshot_active.svg"
-              class="controls--icon"
-            />
+            <img src="./assets/icons/screenshot.svg" class="controls--icon" />
           </div>
           <div class="controls--icon-container">
             <img src="./assets/icons/mic.svg" class="controls--icon" />
@@ -127,6 +111,7 @@
               src="./assets/icons/fullscreen.svg"
               class="controls--icon"
               style="width: 50px; height: 50px"
+              onclick="openFullscreen(); return false"
             />
           </div>
           <!-- <div class="controls--icon-container">

@@ -9,6 +9,81 @@ let videoDeviceId = null;
 let chunks = [];
 let mediaRecorder;
 let mediaStream;
+let modeSelected = "Favor Performance";
+
+function onChangeMode(event) {
+  // console.log("onChangeMode");
+  // console.log(event.target.innerText);
+  modeSelected = event.target.innerText;
+  // console.log("Set ", modeSelected);
+
+  // get the parent element of the clicked element
+  let parent = event.target.parentElement;
+  // get the child elements and set their color to default
+  parent.children[0].style.color = "rgba(255, 255, 255, 0.8)";
+  parent.children[1].style.color = "rgba(255, 255, 255, 0.8)";
+
+  event.target.style.color = "rgb(240, 83, 72)";
+
+  setShadowCast();
+}
+
+function onModeDropdown() {
+  // console.log("onModeDropdown");
+  // Get the value of the mode
+  // Set an array of two modes: Favour Performance and Favour Resolution
+  let modes = ["Favor Performance", "Favor Resolution"];
+  let mode_arrow = document.getElementById("mode-arrow");
+
+  // console.log("Get ", modeSelected);
+
+  if (mode_arrow.style.transform == "") {
+    if (modeSelected === "Favor Performance") {
+      // console.log("Set Favour Performance to red");
+
+      document.getElementById("mode-items").innerHTML = `            
+      <div
+          class="settings-item--list-item"
+          style="color: rgb(240, 83, 72)"
+          onclick="onChangeMode(event)">
+          Favor Performance
+      </div>
+      <div
+          class="settings-item--list-item"
+          style="color: rgba(255, 255, 255, 0.8)"
+          onclick="onChangeMode(event)">
+          Favor Resolution         
+      </div>  
+      `;
+    } else if (modeSelected === "Favor Resolution") {
+      document.getElementById("mode-items").innerHTML = `            
+      <div
+          class="settings-item--list-item"
+          style="color: rgba(255, 255, 255, 0.8)"
+          onclick="onChangeMode(event)">
+          Favor Performance
+      </div>
+      <div
+          class="settings-item--list-item"
+          style="color: rgb(240, 83, 72)"
+          onclick="onChangeMode(event)">
+          Favor Resolution
+      </div>  
+      `;
+    }
+
+    // Rotate mode-arrow 180 degree
+    mode_arrow.style.transform = "rotate(180deg)";
+  } else {
+    // Close drop down menu
+    document.getElementById("mode-items").innerHTML = "";
+    mode_arrow.style.transform = "";
+  }
+}
+
+function onChangeInput() {
+  console.log("onChangeInput");
+}
 
 function triggerAccessPrompt() {
   // Trigger access of video and audio access right prompt to users
@@ -53,6 +128,16 @@ function triggerAccessPrompt() {
 function setShadowCast() {
   audioDeviceId = null;
   videoDeviceId = null;
+  width_value = 1920;
+  height_value = 1080;
+
+  if (modeSelected === "Favor Performance") {
+    width_value = 1920;
+    height_value = 1080;
+  } else {
+    width_value = 720;
+    height_value = 480;
+  }
 
   navigator.mediaDevices
     .enumerateDevices()
@@ -90,8 +175,8 @@ function setShadowCast() {
           },
           video: {
             deviceId: videoDeviceId,
-            width: { ideal: 720 },
-            height: { ideal: 480 },
+            width: width_value,
+            height: height_value,
             frameRate: { ideal: 60 },
           },
         })
