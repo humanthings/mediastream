@@ -9,8 +9,13 @@ let videoDeviceId = null;
 let chunks = [];
 let mediaRecorder;
 let mediaStream;
-let modeSelected = "Favor Performance";
+let modeSelected = "Favor Resolution";
 let mode_arrow = document.getElementById("mode-arrow");
+let mic_arrow = document.getElementById("mic-arrow");
+let audioDevices = [];
+let micSelected = null;
+let micSelectedID = "default";
+let useMic = true;
 
 function initModeDropdown() {
   if (modeSelected === "Favor Performance") {
@@ -109,14 +114,133 @@ function onModeDropdown() {
   }
 }
 
+function initMicDropDown() {
+  console.log("initMicDropDown");
+  // console.log("micSelectedID", micSelectedID);
+
+  // Get the device lable from id
+  navigator.mediaDevices
+    .enumerateDevices()
+    .then(function (devices) {
+      // console.log(devices);
+      audioDevices = [];
+      devices.forEach(function (device) {
+        // console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
+        if (device.kind === "audioinput") {
+          audioDevices.push(device);
+        }
+      });
+    })
+    .then(function () {
+      // console.log("audioDevices :", audioDevices);
+
+      audioDevices.forEach(function (device) {
+        // console.log(device.label + " id = " + device.deviceId);
+        if (device.deviceId === micSelectedID) {
+          micSelected = device.label;
+          // console.log("Got audioDeviceId", micSelectedID);
+        }
+      });
+
+      if (micSelected !== null) {
+        document.getElementById("mic-items").innerHTML = `            
+      <div
+          class="settings-item--list-item"
+          style="color: rgba(255, 255, 255, 0.8); display: block;"
+          onclick="onChangeMic(event)">
+          ${micSelected}
+      </div>
+      `;
+      }
+    });
+}
+
+function onChangeMic(event) {
+  // console.log("onChangeMic");
+  console.log(event.target.innerText);
+  // get the value of the audio device from the clicked element
+
+  micSelected = event.target.innerText;
+  audioDevices.forEach(function (device) {
+    // console.log(device.label + " id = " + device.deviceId);
+    if (device.label === micSelected) {
+      micSelectedID = device.deviceId;
+      console.log("Got audioDeviceId", micSelectedID);
+    }
+  });
+
+  // get the parent element of the clicked element
+  let parent = event.target.parentElement;
+  // get the child elements and set their color to default
+  for (let i = 0; i < parent.children.length; i++) {
+    parent.children[i].style.display = "none";
+  }
+
+  event.target.style.display = "block";
+  event.target.style.color = "rgb(255, 255, 255, 0.8)";
+  mic_arrow.style.transform = "";
+
+  // Set the solution
+  setShadowCast();
+}
+
 function onMicDropdown() {
   console.log("onMicDropdown");
-  let mic_arrow = document.getElementById("mic-arrow");
 
   if (mic_arrow.style.transform == "") {
+    // Get the list of audio devices
+    navigator.mediaDevices.enumerateDevices().then(function (devices) {
+      // console.log(devices);
+      audioDevices = [];
+      devices.forEach(function (device) {
+        // console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
+        if (device.kind === "audioinput") {
+          audioDevices.push(device);
+        }
+      });
+
+      // console.log(audioDevices);
+
+      let audioDevicesList = "";
+      audioDevices.forEach(function (device) {
+        // console.log(
+        //   device.kind + ": " + device.label + " id = " + device.deviceId
+        // );
+        if (device.deviceId === micSelectedID) {
+          audioDevicesList += `
+          <div
+            class="settings-item--list-item"
+            style="color: rgb(240, 83, 72); display: block;"
+            onclick="onChangeMic(event)">
+            ${device.label}
+          </div>
+          `;
+        } else {
+          audioDevicesList += `
+          <div
+            class="settings-item--list-item"
+            style="color: rgba(255, 255, 255, 0.8); display: block;"
+            onclick="onChangeMic(event)">
+            ${device.label}
+          </div>
+          `;
+        }
+      });
+
+      // console.log(audioDevicesList);
+
+      document.getElementById("mic-items").innerHTML = audioDevicesList;
+    });
+
+    // Rotate mode-arrow 180 degree
+    mic_arrow.style.transform = "rotate(180deg)";
   } else {
-    document.getElementById("mic-items").innerHTML = "";
-    mode_arrow.style.transform = "";
+    // document.getElementById("mic-items").innerHTML = "";
+    console.log("Close and reset mic dropdown");
+
+    initMicDropDown();
+
+    mic_arrow.style.transform = "";
   }
 }
 
@@ -166,7 +290,7 @@ function setShadowCast() {
   width_value = 1920;
   height_value = 1080;
 
-  if (modeSelected === "Favor Performance") {
+  if (modeSelected === "Favor Resolution") {
     width_value = 1920;
     height_value = 1080;
   } else {
@@ -187,6 +311,11 @@ function setShadowCast() {
           if (device.kind === "audioinput") {
             audioDeviceId = device.deviceId;
             // console.log(audioDeviceId);
+          }
+
+          if ((useMic = true)) {
+            audioDeviceId = micSelectedID;
+            console.log("Got audioDeviceId", audioDeviceId);
           }
 
           // Get the video ID
@@ -380,3 +509,5 @@ window.addEventListener("load", startup, false);
 navigator.mediaDevices.addEventListener("devicechange", startup, false);
 
 initModeDropdown();
+
+initMicDropDown();
