@@ -10,6 +10,31 @@ let chunks = [];
 let mediaRecorder;
 let mediaStream;
 let modeSelected = "Favor Performance";
+let mode_arrow = document.getElementById("mode-arrow");
+
+function initModeDropdown() {
+  if (modeSelected === "Favor Performance") {
+    // console.log("Set Favour Performance to red");
+
+    document.getElementById("mode-items").innerHTML = `            
+    <div
+        class="settings-item--list-item"
+        style="color: rgba(255, 255, 255, 0.8); display: block;"
+        onclick="onChangeMode(event)">
+        Favor Performance
+    </div>
+    `;
+  } else if (modeSelected === "Favor Resolution") {
+    document.getElementById("mode-items").innerHTML = `            
+    <div
+        class="settings-item--list-item"
+        style="color: rgba(255, 255, 255, 0.8); display: block;"
+        onclick="onChangeMode(event)">
+        Favor Resolution
+    </div>  
+    `;
+  }
+}
 
 function onChangeMode(event) {
   // console.log("onChangeMode");
@@ -20,11 +45,14 @@ function onChangeMode(event) {
   // get the parent element of the clicked element
   let parent = event.target.parentElement;
   // get the child elements and set their color to default
-  parent.children[0].style.color = "rgba(255, 255, 255, 0.8)";
-  parent.children[1].style.color = "rgba(255, 255, 255, 0.8)";
+  parent.children[0].style.display = "none";
+  parent.children[1].style.display = "none";
 
-  event.target.style.color = "rgb(240, 83, 72)";
+  event.target.style.display = "block";
+  event.target.style.color = "rgb(255, 255, 255, 0.8)";
+  mode_arrow.style.transform = "";
 
+  // Set the solution
   setShadowCast();
 }
 
@@ -33,7 +61,6 @@ function onModeDropdown() {
   // Get the value of the mode
   // Set an array of two modes: Favour Performance and Favour Resolution
   let modes = ["Favor Performance", "Favor Resolution"];
-  let mode_arrow = document.getElementById("mode-arrow");
 
   // console.log("Get ", modeSelected);
 
@@ -44,13 +71,13 @@ function onModeDropdown() {
       document.getElementById("mode-items").innerHTML = `            
       <div
           class="settings-item--list-item"
-          style="color: rgb(240, 83, 72)"
+          style="color: rgb(240, 83, 72); display: block;"
           onclick="onChangeMode(event)">
           Favor Performance
       </div>
       <div
           class="settings-item--list-item"
-          style="color: rgba(255, 255, 255, 0.8)"
+          style="color: rgba(255, 255, 255, 0.8); display: block;"
           onclick="onChangeMode(event)">
           Favor Resolution         
       </div>  
@@ -59,13 +86,13 @@ function onModeDropdown() {
       document.getElementById("mode-items").innerHTML = `            
       <div
           class="settings-item--list-item"
-          style="color: rgba(255, 255, 255, 0.8)"
+          style="color: rgba(255, 255, 255, 0.8); display: block;"
           onclick="onChangeMode(event)">
           Favor Performance
       </div>
       <div
           class="settings-item--list-item"
-          style="color: rgb(240, 83, 72)"
+          style="color: rgb(240, 83, 72); display: block;"
           onclick="onChangeMode(event)">
           Favor Resolution
       </div>  
@@ -76,13 +103,21 @@ function onModeDropdown() {
     mode_arrow.style.transform = "rotate(180deg)";
   } else {
     // Close drop down menu
-    document.getElementById("mode-items").innerHTML = "";
+    initModeDropdown();
+
     mode_arrow.style.transform = "";
   }
 }
 
-function onChangeInput() {
-  console.log("onChangeInput");
+function onMicDropdown() {
+  console.log("onMicDropdown");
+  let mic_arrow = document.getElementById("mic-arrow");
+
+  if (mic_arrow.style.transform == "") {
+  } else {
+    document.getElementById("mic-items").innerHTML = "";
+    mode_arrow.style.transform = "";
+  }
 }
 
 function triggerAccessPrompt() {
@@ -343,3 +378,5 @@ window.addEventListener("load", startup, false);
 //https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/devicechange_event
 //
 navigator.mediaDevices.addEventListener("devicechange", startup, false);
+
+initModeDropdown();
