@@ -143,6 +143,7 @@ video {
   margin-right: 4px;
 }
 
+/*  https://www.smashingmagazine.com/2021/12/create-custom-range-input-consistent-browsers/ */
 /* Base of type range */
 input[type="range"] {
   -webkit-appearance: none;

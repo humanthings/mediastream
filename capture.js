@@ -15,7 +15,8 @@ let mic_arrow = document.getElementById("mic-arrow");
 let audioDevices = [];
 let micSelected = null;
 let micSelectedID = "default";
-let useMic = true;
+let useMic = true; // if the mic button is clicked
+let volume = 100;
 
 function initModeDropdown() {
   if (modeSelected === "Favor Performance") {
@@ -244,6 +245,15 @@ function onMicDropdown() {
   }
 }
 
+function onVolumeChange(value) {
+  console.log("onVolumeChange", value);
+
+  // Set the volume
+  volume = value;
+
+  setShadowCast();
+}
+
 function triggerAccessPrompt() {
   // Trigger access of video and audio access right prompt to users
   // https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Build_a_phone_with_peerjs/Connect_peers/Get_microphone_permission
@@ -350,6 +360,9 @@ function setShadowCast() {
 
             document.body.style.backgroundImage = "none";
             video.style.display = "block"; // Display the video container
+
+            // Set the video volume
+            video.volume = volume / 100;
 
             video.play(); // Must not use the autoplay attribute in html
 
