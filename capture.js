@@ -15,7 +15,7 @@ let mic_arrow = document.getElementById("mic-arrow");
 let audioDevices = [];
 let micSelected = null;
 let micSelectedID = "default";
-let useMic = true; // if the mic button is clicked
+let useMic = false; // if the mic button is clicked
 let volume = 100;
 
 function initModeDropdown() {
@@ -116,7 +116,7 @@ function onModeDropdown() {
 }
 
 function initMicDropDown() {
-  console.log("initMicDropDown");
+  // console.log("initMicDropDown");
   // console.log("micSelectedID", micSelectedID);
 
   // Get the device lable from id
@@ -320,10 +320,10 @@ function setShadowCast() {
           // Get the audio ID
           if (device.kind === "audioinput") {
             audioDeviceId = device.deviceId;
-            // console.log(audioDeviceId);
+            console.log("audioDeviceId: ", audioDeviceId);
           }
 
-          if ((useMic = true)) {
+          if (useMic === true) {
             audioDeviceId = micSelectedID;
             console.log("Got audioDeviceId", audioDeviceId);
           }
@@ -394,6 +394,57 @@ function openFullscreen() {
   }
 }
 
+function onUseMic() {
+  console.log("useMic");
+  useMic = true;
+
+  setShadowCast();
+
+  // Invisible use mic button
+  document.getElementById("btn_use_mic").style.display = "none";
+  document.getElementById("btn_use_no_mic").style.display = "block";
+}
+
+function onUseNoMic() {
+  console.log("useNoMic");
+  useMic = false;
+
+  setShadowCast();
+
+  // Invisible use No mic button
+  document.getElementById("btn_use_mic").style.display = "block";
+  document.getElementById("btn_use_no_mic").style.display = "none";
+}
+
+function onScreenshoot() {
+  console.log("onScreenshoot");
+  const track = mediaStream.getVideoTracks()[0];
+  let imageCapture = new ImageCapture(track);
+
+  imageCapture
+    .takePhoto()
+    .then((blob) => {
+      // console.log("Took photo:", blob);
+
+      // Save blob to a file and download it
+      // https://stackoverflow.com/questions/19327749/javascript-blob-filename-without-link
+      const a = document.createElement("a");
+      a.style.display = "none";
+      document.body.appendChild(a);
+
+      // Create ObjectURL
+      const url = window.URL.createObjectURL(blob);
+      a.href = url;
+      // Give filename with date and time in simple format
+      a.download = "screenshot_" + new Date().toLocaleString() + ".jpg";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    })
+    .catch((error) => {
+      console.error("takePhoto() error: ", error);
+    });
+}
+
 //
 // https://dev.to/ethand91/mediarecorder-api-tutorial-54n8
 //
@@ -422,8 +473,8 @@ const startRecord = async () => {
   mediaRecorder.start(1000);
 
   // Invisible btn_start_record
-  document.getElementById("btn_start_record").style.visibility = "hidden";
-  document.getElementById("btn_stop_record").style.visibility = "visible";
+  document.getElementById("btn_start_record").style.display = "none";
+  document.getElementById("btn_stop_record").style.display = "block";
 };
 
 const setListeners = () => {
@@ -454,9 +505,9 @@ const stopRecord = async () => {
 
   mediaRecorder.stop();
 
-  // Invisible btn_start_record
-  document.getElementById("btn_start_record").style.visibility = "visible";
-  document.getElementById("btn_stop_record").style.visibility = "hidden";
+  // Invisible btn_stop_record
+  document.getElementById("btn_start_record").style.display = "block";
+  document.getElementById("btn_stop_record").style.display = "none";
 };
 
 const saveFile = () => {

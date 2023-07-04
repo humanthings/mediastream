@@ -87,9 +87,9 @@
         <div class="settings-item--container">
           <div class="settings-item--header">
             <div class="settings-item--header-title">Language</div>
-            <img src="./assets/icons/arrow_down.svg" />
+            <img id="lang-arrow" src="./assets/icons/arrow_down.svg" />
           </div>
-          <div class="settings-item--list-item">English</div>
+          <div id="lang-items"></div>
         </div>
 
         <div class="controls--container" style="visibility: visible">
@@ -97,13 +97,41 @@
             <img src="./assets/icons/settings.svg" class="controls--icon" />
           </div>
           <div class="controls--icon-container">
-            <img src="./assets/icons/screenshot.svg" class="controls--icon" />
+            <img
+              onclick="onScreenshoot()"
+              src="./assets/icons/screenshot.svg"
+              class="controls--icon"
+            />
           </div>
           <div class="controls--icon-container">
-            <img src="./assets/icons/mic.svg" class="controls--icon" />
+            <img
+              id="btn_use_mic"
+              onclick="onUseMic()"
+              src="./assets/icons/mic.svg"
+              class="controls--icon"
+            />
+            <img
+              id="btn_use_no_mic"
+              onclick="onUseNoMic()"
+              src="./assets/icons/mic_active.svg"
+              class="controls--icon"
+              style="display: none"
+            />
           </div>
           <div class="controls--icon-container">
-            <img src="./assets/icons/record.svg" class="controls--icon" />
+            <img
+              id="btn_start_record"
+              onclick="startRecord()"
+              src="./assets/icons/record.svg"
+              class="controls--icon"
+            />
+            <img
+              id="btn_stop_record"
+              onclick="stopRecord()"
+              src="./assets/icons/record_active.svg"
+              class="controls--icon"
+              style="display: none"
+            />
           </div>
           <div class="controls--icon-container">
             <img
