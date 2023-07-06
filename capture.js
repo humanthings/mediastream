@@ -12,11 +12,142 @@ let mediaStream;
 let modeSelected = "Favor Resolution";
 let mode_arrow = document.getElementById("mode-arrow");
 let mic_arrow = document.getElementById("mic-arrow");
+let lang_arrow = document.getElementById("lang-arrow");
 let audioDevices = [];
 let micSelected = null;
 let micSelectedID = "default";
 let useMic = false; // if the mic button is clicked
 let volume = 100;
+let langSelected = "English";
+
+function setLanguage(lang) {
+  if (lang === "English") {
+    // Get the en.json file and set the text
+    file = "en";
+  } else if (lang === "Chinese Simplified") {
+    file = "zh-hans";
+  } else if (lang === "Chinese Traditional") {
+    file = "zh-hant";
+  } else if (lang === "Japanese") {
+    file = "jp";
+  } else if (lang === "Korean") {
+    file = "ko";
+  }
+
+  fetch(`./assets/translations/${file}.json`).then((response) => {
+    // console.log(response);
+    response.json().then((data) => {
+      // console.log(data.FAVOR_PERFOMANCE);
+      // return data;
+      header_title = document.getElementsByClassName(
+        "settings-item--header-title"
+      );
+
+      header_title[0].innerText = data.MODE;
+      header_title[1].innerText = data.MICROPHONE;
+      header_title[2].innerText = data.VOLUME;
+      header_title[3].innerText = data.CREDITS;
+      header_title[4].innerText = data.LANGUAGE;
+      // Array.from(header_title).forEach((title) => {
+      //   console.log(title.childNodes[0]);
+      //   title.innerText = data.MODE;
+      //   console.log(data.MODE);
+      // });
+    });
+  });
+}
+
+function initLangDropdown() {
+  // Get localstorage the value of the langSelected
+  langSelected = localStorage.getItem("langSelected");
+
+  if (langSelected === null) {
+    langSelected = "English";
+  }
+
+  document.getElementById("lang-items").innerHTML = `            
+  <div
+      class="settings-item--list-item"
+      style="color: rgba(255, 255, 255, 0.8); display: block;"
+      onclick="onChangeMic(event)">
+      ${langSelected}
+  </div>
+  `;
+
+  // Set the language
+  setLanguage(langSelected);
+}
+
+function onChangeLang(event) {
+  // console.log("onChangeLang");
+  console.log(event.target.innerText);
+  // get the value of the audio device from the clicked element
+
+  langSelected = event.target.innerText;
+
+  // Set the language
+  setLanguage(langSelected);
+  // set localstorage the value of the langSelected
+  localStorage.setItem("langSelected", langSelected);
+
+  // get the parent element of the clicked element
+  let parent = event.target.parentElement;
+  // get the child elements and set their color to default
+  for (let i = 0; i < parent.children.length; i++) {
+    parent.children[i].style.display = "none";
+  }
+
+  event.target.style.display = "block";
+  event.target.style.color = "rgb(255, 255, 255, 0.8)";
+  lang_arrow.style.transform = "";
+}
+
+function onLangDropdown() {
+  console.log("onLangDropdown");
+
+  let langs = [
+    "English",
+    "Chinese Simplified",
+    "Chinese Traditional",
+    "Japanese",
+    "Korean",
+  ];
+
+  if (lang_arrow.style.transform == "") {
+    langList = [];
+    langs.forEach(function (lang) {
+      if (lang === langSelected) {
+        langList += `
+        <div
+          class="settings-item--list-item"
+          style="color: rgb(240, 83, 72); display: block;"
+          onclick="onChangeLang(event)">
+          ${lang}
+        </div>
+        `;
+      } else {
+        langList += `
+        <div
+          class="settings-item--list-item"
+          style="color: rgba(255, 255, 255, 0.8); display: block;"
+          onclick="onChangeLang(event)">
+          ${lang}
+        </div>
+        `;
+      }
+    });
+
+    document.getElementById("lang-items").innerHTML = langList;
+
+    // Rotate lang-arrow 180 degree
+    lang_arrow.style.transform = "rotate(180deg)";
+  } else {
+    // Close drop down menu
+    initLangDropdown();
+
+    lang_arrow.style.transform = "";
+  }
+}
 
 function initModeDropdown() {
   if (modeSelected === "Favor Performance") {
@@ -359,6 +490,10 @@ function setShadowCast() {
             video.srcObject = stream;
 
             document.body.style.backgroundImage = "none";
+            btn_go_to_website.style.visibility = "hidden";
+            btn_sologans.style.visibility = "hidden";
+            settings_container.style.visibility = "visible";
+            controls_container.style.visibility = "visible";
             video.style.display = "block"; // Display the video container
 
             // Set the video volume
@@ -374,6 +509,10 @@ function setShadowCast() {
             document.body.style.backgroundImage =
               "url('./assets/images/background.jpg')";
             video.style.display = "none";
+            btn_go_to_website.style.visibility = "visible";
+            btn_sologans.style.visibility = "visible";
+            settings_container.style.visibility = "hidden";
+            controls_container.style.visibility = "hidden";
             console.log("Can't find the ShadowCast device");
           }
         })
@@ -420,6 +559,10 @@ function onScreenshoot() {
   console.log("onScreenshoot");
   const track = mediaStream.getVideoTracks()[0];
   let imageCapture = new ImageCapture(track);
+  btn_screenshoot = document.getElementById("btn_screenshoot");
+  btn_screenshoot.style.display = "none";
+  btn_screenshoot_active = document.getElementById("btn_screenshoot_active");
+  btn_screenshoot_active.style.display = "block";
 
   imageCapture
     .takePhoto()
@@ -439,9 +582,15 @@ function onScreenshoot() {
       a.download = "screenshot_" + new Date().toLocaleString() + ".jpg";
       a.click();
       window.URL.revokeObjectURL(url);
+
+      btn_screenshoot.style.display = "block";
+      btn_screenshoot_active.style.display = "none";
     })
     .catch((error) => {
       console.error("takePhoto() error: ", error);
+
+      btn_screenshoot.style.display = "block";
+      btn_screenshoot_active.style.display = "none";
     });
 }
 
@@ -518,7 +667,7 @@ const saveFile = () => {
 
   link.style = "display: none";
   link.href = blobUrl;
-  link.download = "recorded_file.webm";
+  link.download = "video_" + new Date().toLocaleString() + ".webm";
 
   document.body.appendChild(link);
   link.click();
@@ -575,3 +724,24 @@ navigator.mediaDevices.addEventListener("devicechange", startup, false);
 initModeDropdown();
 
 initMicDropDown();
+
+initLangDropdown();
+
+// Check if the animation is completed then close it
+let lottie_startup = document.getElementById("lottie_startup");
+lottie_startup.addEventListener("complete", () => {
+  // console.log("You've captured the stop event!");
+  lottie_startup.style.visibility = "hidden";
+});
+
+var timeout;
+document.onmousemove = function () {
+  settings_container.style.visibility = "visible";
+  controls_container.style.visibility = "visible";
+  clearTimeout(timeout);
+  timeout = setTimeout(function () {
+    // console.log("move your mouse");
+    settings_container.style.visibility = "hidden";
+    controls_container.style.visibility = "hidden";
+  }, 6000);
+};
