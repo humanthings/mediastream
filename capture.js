@@ -435,8 +435,8 @@ function setShadowCast() {
     width_value = 1920;
     height_value = 1080;
   } else {
-    width_value = 720;
-    height_value = 480;
+    width_value = 1280;
+    height_value = 720;
   }
 
   navigator.mediaDevices
