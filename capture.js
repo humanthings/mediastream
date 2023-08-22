@@ -416,14 +416,14 @@ function triggerAccessPrompt() {
     });
 }
 
-// function stopStreamedVideo(videoElem) {
-//   // https://stackoverflow.com/questions/11642926/stop-close-webcam-which-is-opened-by-navigator-getusermedia
-//   let stream = videoElem.srcObject;
-//   let tracks = stream.getTracks();
-//   tracks.forEach(function (track) {
-//     track.stop();
-//   });
-// }
+function stopStreamedVideo(videoElem) {
+  // https://stackoverflow.com/questions/11642926/stop-close-webcam-which-is-opened-by-navigator-getusermedia
+  let stream = videoElem.srcObject;
+  let tracks = stream.getTracks();
+  tracks.forEach(function (track) {
+    track.stop();
+  });
+}
 
 function setShadowCast() {
   audioDeviceId = null;
@@ -520,6 +520,7 @@ function setShadowCast() {
     })
     .catch((err) => {
       console.error(`${err.name}: ${err.message}`);
+      // stopStreamedVideo();  // see if this code can stop the stream when ShadowCast is NOT found.
     });
 }
 
@@ -555,7 +556,7 @@ function onUseNoMic() {
   document.getElementById("btn_use_no_mic").style.display = "none";
 }
 
-function onScreenshoot() {
+function onScreenshoot1() {
   console.log("onScreenshoot");
   const track = mediaStream.getVideoTracks()[0];
   let imageCapture = new ImageCapture(track);
@@ -592,6 +593,40 @@ function onScreenshoot() {
       btn_screenshoot.style.display = "block";
       btn_screenshoot_active.style.display = "none";
     });
+}
+
+function onScreenshoot() {
+  console.log("onScreenshoot new");
+
+  btn_screenshoot = document.getElementById("btn_screenshoot");
+  btn_screenshoot.style.display = "none";
+  btn_screenshoot_active = document.getElementById("btn_screenshoot_active");
+  btn_screenshoot_active.style.display = "block";
+
+  //https://levelup.gitconnected.com/webrtc-capturestream-ios-compatibility-2ba51cdc7207
+  const video = document.querySelector("video");
+  const canvas = document.createElement("canvas");
+  document.body.appendChild(canvas);
+  if (!canvas || !video) return;
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext("2d")?.drawImage(video, 0, 0, canvas.width, canvas.height);
+  // console.log(canvas);
+  const url = canvas.toDataURL();
+
+  const a = document.createElement("a");
+  a.style.display = "none";
+  a.href = url;
+  a.download = "screenshot_" + new Date().toLocaleString() + ".jpg";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }, 100);
+
+  btn_screenshoot.style.display = "block";
+  btn_screenshoot_active.style.display = "none";
 }
 
 //
