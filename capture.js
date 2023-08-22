@@ -19,6 +19,7 @@ let micSelectedID = "default";
 let useMic = false; // if the mic button is clicked
 let volume = 100;
 let langSelected = "English";
+let fileformat = "webm";
 
 function setLanguage(lang) {
   if (lang === "English") {
@@ -633,12 +634,14 @@ function onScreenshoot() {
 // https://dev.to/ethand91/mediarecorder-api-tutorial-54n8
 //
 const startRecord = async () => {
-  const mimeType = "video/webm;codecs=vp8,opus";
+  let mimeType = "video/webm;codecs=vp8,opus";
 
   if (!MediaRecorder.isTypeSupported(mimeType)) {
-    alert("vp8/opus mime type is not supported");
+    // alert("vp8/opus mime type is not supported");
 
-    return;
+    // return;
+    mimeType = "video/mp4";
+    fileformat = "mp4";
   }
 
   const options = {
@@ -702,7 +705,11 @@ const saveFile = () => {
 
   link.style = "display: none";
   link.href = blobUrl;
-  link.download = "video_" + new Date().toLocaleString() + ".webm";
+  if (fileformat == "webm") {
+    link.download = "video_" + new Date().toLocaleString() + ".webm";
+  } else {
+    link.download = "video_" + new Date().toLocaleString() + ".mp4";
+  }
 
   document.body.appendChild(link);
   link.click();
