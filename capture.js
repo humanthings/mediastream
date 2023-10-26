@@ -429,8 +429,8 @@ function stopStreamedVideo(videoElem) {
 function setShadowCast() {
   audioDeviceId = null;
   videoDeviceId = null;
-  width_value = 1920;
-  height_value = 1080;
+  width_value = 2560;
+  height_value = 1440;
 
   if (modeSelected === "Favor Resolution") {
     // width_value = 1920;
