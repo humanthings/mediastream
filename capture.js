@@ -484,10 +484,14 @@ function setShadowCast() {
             channelCount: 2,
           },
           video: {
+            // deviceId: videoDeviceId,
+            // width: width_value,
+            // height: height_value,
+            // frameRate: { ideal: 60 },
             deviceId: videoDeviceId,
-            width: width_value,
-            height: height_value,
-            frameRate: { ideal: 60 },
+            width: { exact: width_value },
+            height: { exact: height_value },
+            frameRate: { exact: 60 },
           },
         })
         .then((stream) => {
