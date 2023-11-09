@@ -429,17 +429,17 @@ function stopStreamedVideo(videoElem) {
 function setShadowCast() {
   audioDeviceId = null;
   videoDeviceId = null;
-  width_value = 1920;
-  height_value = 1080;
+  width_value = 2560;
+  height_value = 1440;
 
-  if (modeSelected === "Favor Resolution") {
-    // width_value = 1920;
-    // height_value = 1080;
+  if (modeSelected === "Favor Performance") {
+    // width_value = 2560;
+    // height_value = 1440;
     width_value = 2560; // Set the 2K
     height_value = 1440;
   } else {
-    // width_value = 1280;
-    // height_value = 720;
+    // width_value = 1920;
+    // height_value = 1080;
     width_value = 1920;
     height_value = 1080;
   }
