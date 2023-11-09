@@ -9,7 +9,7 @@ let videoDeviceId = null;
 let chunks = [];
 let mediaRecorder;
 let mediaStream;
-let modeSelected = "Favor Resolution";
+let modeSelected = "Favor Performance";
 let mode_arrow = document.getElementById("mode-arrow");
 let mic_arrow = document.getElementById("mic-arrow");
 let lang_arrow = document.getElementById("lang-arrow");
