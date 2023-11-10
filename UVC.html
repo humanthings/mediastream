@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>UVC Camera App</title>
+        <style>
+            html, body {
+                height: 100%;
+                margin: 0;
+                overflow: hidden;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: #000;
+            }
+
+            #video {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                z-index: -100;
+                transform: translateX(-50%) translateY(-50%);
+                background: no-repeat;
+                background-size: cover;
+                transition: 1s opacity;
+                object-fit: cover;
+            }
+
+
+            #menu {
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                color: white;
+                padding: 10px;
+                text-align: center;
+                transition: opacity 0.5s;
+                opacity: 0;
+            }
+
+            .resolution, .framerate {
+                margin: 20px auto;
+                padding: 5px;
+                width: 200px;
+            }
+
+            .fullscreen {
+                margin: 20px auto;
+                padding: 5px;
+            }
+
+            .logo {
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 100;
+                width: 100px;
+                height: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <img src="logo.png" alt="Logo" class="logo">
+        <video id="video" autoplay></video>
+        <div id="menu">
+            <select id="resolution" class="resolution">
+                <option value="2560x1440" selected>2560x1440</option>
+                <option value="1920x1080">1920x1080</option>
+                <option value="1280x720">1280x720</option>
+                <option value="640x480">640x480</option>
+            </select>
+            <select id="framerate" class="framerate">
+                <option value="60">60 fps</option>
+                <option value="30" selected>30 fps</option>
+                <option value="15">15 fps</option>
+            </select>
+            <button id="fullscreenButton" class="fullscreen">Fullscreen</button>
+        </div>
+        <script>
+            var video = document.querySelector("#video");
+            var menu = document.querySelector("#menu");
+            var resolutionSelect = document.querySelector("#resolution");
+            var framerateSelect = document.querySelector("#framerate");
+            var fullscreenButton = document.querySelector("#fullscreenButton");
+
+            function getMedia() {
+                var resolution = resolutionSelect.value.split("x");
+                var width = parseInt(resolution[0], 10);
+                var height = parseInt(resolution[1], 10);
+                var framerate = parseInt(framerateSelect.value, 10);
+
+                // Update video tag dimensions
+                video.style.width = width + 'px';
+                video.style.height = height + 'px';
+
+    // Stop all tracks in the current stream
+    if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
+    }
+
+                if (navigator.mediaDevices.getUserMedia) {
+                    navigator.mediaDevices.getUserMedia({
+                        audio: true,
+                        video: {
+                            width: { exact: width },
+                            height: { exact: height },
+                            frameRate: { exact: framerate }
+                        }
+                    })
+                    .then(function (stream) {
+                        video.srcObject = stream;
+                    })
+                    .catch(function (err0r) {
+                        console.log("Something went wrong!");
+                    });
+                }
+            }
+
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    video.requestFullscreen().catch(err => {
+                        alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                    });
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+
+            resolutionSelect.addEventListener('change', getMedia);
+            framerateSelect.addEventListener('change', getMedia);
+            fullscreenButton.addEventListener('click', toggleFullscreen);
+
+            getMedia();
+
+            document.addEventListener('mousemove', function(e) {
+                var y = e.clientY;
+                var windowHeight = window.innerHeight;
+                if (y > windowHeight * 0.8) {
+                    menu.style.opacity = "1";
+                } else {
+                    menu.style.opacity = "0";
+                }
+            });
+        </script>
+    </body>
+</html>
