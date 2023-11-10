@@ -437,11 +437,13 @@ function setShadowCast() {
     // height_value = 1080;
     width_value = 2560; // Set the 2K
     height_value = 1440;
+    frame_rate = 30;
   } else {
     // width_value = 1280;
     // height_value = 720;
     width_value = 1920;
     height_value = 1080;
+    frame_rate = 60;
   }
 
   navigator.mediaDevices
@@ -491,7 +493,7 @@ function setShadowCast() {
             deviceId: videoDeviceId,
             width: { exact: width_value },
             height: { exact: height_value },
-            frameRate: { exact: 60 },
+            frameRate: { exact: frame_rate },
           },
         })
         .then((stream) => {
