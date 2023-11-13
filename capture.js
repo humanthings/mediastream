@@ -190,6 +190,12 @@ function onChangeMode(event) {
   event.target.style.color = "rgb(255, 255, 255, 0.8)";
   mode_arrow.style.transform = "";
 
+  // stop the stream
+  let tracks = mediaStream.getTracks();
+  tracks.forEach(function (track) {
+    track.stop();
+  });
+
   // Set the solution
   setShadowCast();
 }
