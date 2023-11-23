@@ -13,7 +13,11 @@ let modeSelected = "Favor Resolution";
 let mode_arrow = document.getElementById("mode-arrow");
 let mic_arrow = document.getElementById("mic-arrow");
 let lang_arrow = document.getElementById("lang-arrow");
+let shadowcastType = "shadowcast";
+let videoDevices = [];
 let audioDevices = [];
+let videoSelected = null;
+let videoSelectedID = "";
 let micSelected = null;
 let micSelectedID = "default";
 let useMic = false; // if the mic button is clicked
@@ -35,38 +39,37 @@ function setLanguage(lang) {
     file = "ko";
   }
 
-  fetch(`./assets/translations/${file}.json`).then((response) => {
-    // console.log(response);
-    response.json().then((data) => {
-      // console.log(data.FAVOR_PERFOMANCE);
-      // return data;
-      header_title = document.getElementsByClassName(
-        "settings-item--header-title"
-      );
+  // Disable the translate of menu items for testing.
+  // fetch(`./assets/translations/${file}.json`).then((response) => {
+  //   // console.log(response);
+  //   response.json().then((data) => {
+  //     // console.log(data.FAVOR_PERFOMANCE);
+  //     // return data;
+  //     header_title = document.getElementsByClassName(
+  //       "settings-item--header-title"
+  //     );
 
-      header_title[0].innerText = data.MODE;
-      header_title[1].innerText = data.MICROPHONE;
-      header_title[2].innerText = data.VOLUME;
-      header_title[3].innerText = data.CREDITS;
-      header_title[4].innerText = data.LANGUAGE;
-      // Array.from(header_title).forEach((title) => {
-      //   console.log(title.childNodes[0]);
-      //   title.innerText = data.MODE;
-      //   console.log(data.MODE);
-      // });
-    });
-  });
+  //     header_title[0].innerText = data.MODE;
+  //     header_title[1].innerText = data.MICROPHONE;
+  //     header_title[2].innerText = data.VOLUME;
+  //     header_title[3].innerText = data.CREDITS;
+  //     header_title[4].innerText = data.LANGUAGE;
+  //     // Array.from(header_title).forEach((title) => {
+  //     //   console.log(title.childNodes[0]);
+  //     //   title.innerText = data.MODE;
+  //     //   console.log(data.MODE);
+  //     // });
+  //   });
+  // });
 }
 
 function initLangDropdown() {
   // Get localstorage the value of the langSelected
   langSelected = localStorage.getItem("langSelected");
-
   if (langSelected === null) {
     langSelected = "English";
   }
-
-  document.getElementById("lang-items").innerHTML = `            
+  document.getElementById("lang-items").innerHTML = `
   <div
       class="settings-item--list-item"
       style="color: rgba(255, 255, 255, 0.8); display: block;"
@@ -74,7 +77,6 @@ function initLangDropdown() {
       ${langSelected}
   </div>
   `;
-
   // Set the language
   setLanguage(langSelected);
 }
@@ -253,6 +255,10 @@ function onModeDropdown() {
   }
 }
 
+function initVideoDropDown() {
+  console.log("initVideoDropDown");
+}
+
 function initMicDropDown() {
   // console.log("initMicDropDown");
   // console.log("micSelectedID", micSelectedID);
@@ -262,9 +268,16 @@ function initMicDropDown() {
     .enumerateDevices()
     .then(function (devices) {
       // console.log(devices);
+      videoDevices = [];
       audioDevices = [];
       devices.forEach(function (device) {
-        // console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
+        console
+          .log
+          // device.kind + ": " + device.label + " id = " + device.deviceId
+          ();
+        if (device.kind === "videoinput") {
+          videoDevices.push(device);
+        }
         if (device.kind === "audioinput") {
           audioDevices.push(device);
         }
@@ -292,6 +305,42 @@ function initMicDropDown() {
       `;
       }
     });
+}
+
+function onChangeVideo(event) {
+  console.log("onChangeVideo");
+  console.log(event.target.innerText);
+
+  videoSelected = event.target.innerText;
+
+  // Get the device ID for video from the selected video device
+  videoDevices.forEach(function (device) {
+    // console.log(device.label + " id = " + device.deviceId);
+    if (device.label === videoSelected) {
+      videoSelectedID = device.deviceId;
+      console.log("Got videoDeviceId", videoSelectedID);
+    }
+  });
+
+  // get the parent element of the clicked element
+  let parent = event.target.parentElement;
+  // get the child elements and set their color to default
+  for (let i = 0; i < parent.children.length; i++) {
+    parent.children[i].style.display = "none";
+  }
+
+  event.target.style.display = "block";
+  event.target.style.color = "rgb(255, 255, 255, 0.8)";
+  mic_arrow.style.transform = "";
+
+  // stop the stream
+  let tracks = mediaStream.getTracks();
+  tracks.forEach(function (track) {
+    track.stop();
+  });
+
+  // Set the solution
+  setShadowCast();
 }
 
 function onChangeMic(event) {
@@ -323,6 +372,37 @@ function onChangeMic(event) {
   setShadowCast();
 }
 
+function onVideoDropdown() {
+  // console.log("onVideoDropdown");
+  // console.log("videoSelectedID", videoSelectedID);
+  // console.log("videoDevices", videoDevices);
+
+  let videoDevicesList = "";
+  videoDevices.forEach(function (device) {
+    // console.log(device.label + " id = " + device.deviceId);
+    if (device.deviceId === videoSelectedID) {
+      videoDevicesList += `
+      <div
+        class="settings-item--list-item"
+        style="color: rgb(240, 83, 72); display: block;"
+        onclick="onChangeVideo(event)">
+        ${device.label}
+      </div>
+      `;
+    } else {
+      videoDevicesList += `
+      <div
+        class="settings-item--list-item"
+        style="color: rgba(255, 255, 255, 0.8); display: block;"
+        onclick="onChangeVideo(event)">
+        ${device.label}
+      </div>
+      `;
+    }
+  });
+  document.getElementById("video-items").innerHTML = videoDevicesList;
+}
+
 function onMicDropdown() {
   console.log("onMicDropdown");
 
@@ -332,7 +412,9 @@ function onMicDropdown() {
       // console.log(devices);
       audioDevices = [];
       devices.forEach(function (device) {
-        // console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
+        // console.log(
+        //   device.kind + ": " + device.label + " id = " + device.deviceId
+        // );
         if (device.kind === "audioinput") {
           audioDevices.push(device);
         }
@@ -437,19 +519,15 @@ function setShadowCast() {
   videoDeviceId = null;
   width_value = 1920;
   height_value = 1080;
+  frame_rate = 60;
 
+  // This is the resolution for ShadowCast
   if (modeSelected === "Favor Resolution") {
-    // width_value = 1920;
-    // height_value = 1080;
-    width_value = 2560; // Set the 2K
-    height_value = 1440;
-    frame_rate = 30;
-  } else {
-    // width_value = 1280;
-    // height_value = 720;
     width_value = 1920;
     height_value = 1080;
-    frame_rate = 60;
+  } else {
+    width_value = 1280;
+    height_value = 720;
   }
 
   navigator.mediaDevices
@@ -464,9 +542,10 @@ function setShadowCast() {
           // Get the audio ID
           if (device.kind === "audioinput") {
             audioDeviceId = device.deviceId;
-            console.log("audioDeviceId: ", audioDeviceId);
+            // console.log("audioDeviceId: ", audioDeviceId);
           }
 
+          // If user selected to use the mic
           if (useMic === true) {
             audioDeviceId = micSelectedID;
             console.log("Got audioDeviceId", audioDeviceId);
@@ -477,10 +556,57 @@ function setShadowCast() {
             videoDeviceId = device.deviceId;
             // console.log(videoDeviceId);
           }
+
+          // If the not video input is selected, then use the default ShadowCast video device
+          if (videoSelectedID !== "") {
+            console.log("Got videoSelectedID", videoSelectedID);
+            videoDeviceId = videoSelectedID;
+            console.log("changed ID", videoDeviceId);
+          } else {
+            console.log("Got original ", videoDeviceId);
+          }
         }
+
+        // This is the check if the ShadowCast 2 (Pro) is connected
+        if (device.label?.toLowerCase()?.includes("shadowcast 2")) {
+          shadowcastType = "shadowcast 2";
+
+          if (modeSelected === "Favor Resolution") {
+            width_value = 2560; // Set the 2K
+            height_value = 1440;
+            frame_rate = 30;
+          } else {
+            width_value = 1920;
+            height_value = 1080;
+            frame_rate = 60;
+          }
+        }
+
+        if (device.label?.toLowerCase()?.includes("shadowcast 2 pro")) {
+          shadowcastType = "shadowcast 2 pro";
+
+          if (modeSelected === "Favor Resolution") {
+            width_value = 3840; // Set the 4K
+            height_value = 2160;
+            frame_rate = 60;
+          } else {
+            width_value = 1920;
+            height_value = 1080;
+            frame_rate = 60;
+          }
+        }
+
+        // console.log(
+        //   "Resolution selected: ",
+        //   width_value,
+        //   height_value,
+        //   frame_rate
+        // );
       });
     })
     .then(() => {
+      console.log("Before change", videoDeviceId);
+
       // from https://github.com/humanthings/genki-arcade-web/blob/master/src/hooks/useMediaStream.ts#L61
       navigator.mediaDevices
         .getUserMedia({
@@ -503,35 +629,37 @@ function setShadowCast() {
           },
         })
         .then((stream) => {
-          if (audioDeviceId && videoDeviceId) {
-            video.srcObject = stream;
+          // if (audioDeviceId && videoDeviceId) {
+          video.srcObject = stream;
 
-            document.body.style.backgroundImage = "none";
-            btn_go_to_website.style.visibility = "hidden";
-            btn_sologans.style.visibility = "hidden";
-            settings_container.style.visibility = "visible";
-            controls_container.style.visibility = "visible";
-            video.style.display = "block"; // Display the video container
+          document.body.style.backgroundImage = "none";
+          btn_go_to_website.style.visibility = "hidden";
+          btn_sologans.style.visibility = "hidden";
+          settings_container.style.visibility = "visible";
+          controls_container.style.visibility = "visible";
+          video.style.display = "block"; // Display the video container
 
-            // Set the video volume
-            video.volume = volume / 100;
+          // Set the video volume
+          video.volume = volume / 100;
 
-            video.play(); // Must not use the autoplay attribute in html
+          video.play(); // Must not use the autoplay attribute in html
 
-            console.log("video started");
+          console.log("video started");
 
-            // Set mediaStram global variable
-            mediaStream = stream;
-          } else {
-            document.body.style.backgroundImage =
-              "url('./assets/images/background.jpg')";
-            video.style.display = "none";
-            btn_go_to_website.style.visibility = "visible";
-            btn_sologans.style.visibility = "visible";
-            settings_container.style.visibility = "hidden";
-            controls_container.style.visibility = "hidden";
-            console.log("Can't find the ShadowCast device");
-          }
+          // Set mediaStram global variable
+          mediaStream = stream;
+
+          // console.log(mediaStream);
+          // } else {
+          //   document.body.style.backgroundImage =
+          //     "url('./assets/images/background.jpg')";
+          //   video.style.display = "none";
+          //   btn_go_to_website.style.visibility = "visible";
+          //   btn_sologans.style.visibility = "visible";
+          //   settings_container.style.visibility = "hidden";
+          //   controls_container.style.visibility = "hidden";
+          //   console.log("Can't find the ShadowCast device");
+          // }
         })
         .catch(console.error);
     })
@@ -736,23 +864,6 @@ const saveFile = () => {
 };
 
 function startup() {
-  // Remarked to disable the example of ffmpeg
-
-  // const { createFFmpeg, fetchFile } = FFmpeg;
-  // const ffmpeg = createFFmpeg({ log: true });
-  // const transcode = async ({ target: { files } }) => {
-  //   const { name } = files[0];
-  //   await ffmpeg.load();
-  //   ffmpeg.FS("writeFile", name, await fetchFile(files[0]));
-  //   await ffmpeg.run("-i", name, "output.mp4");
-  //   const data = ffmpeg.FS("readFile", "output.mp4");
-  //   const video = document.getElementById("player");
-  //   video.src = URL.createObjectURL(
-  //     new Blob([data.buffer], { type: "video/mp4" })
-  //   );
-  // };
-  // document.getElementById("uploader").addEventListener("change", transcode);
-
   navigator.permissions
     .query({ name: "microphone" || "camera" })
     .then(function (result) {
@@ -779,7 +890,9 @@ window.addEventListener("load", startup, false);
 //
 navigator.mediaDevices.addEventListener("devicechange", startup, false);
 
-initModeDropdown();
+// initModeDropdown();
+
+initVideoDropDown();
 
 initMicDropDown();
 
@@ -793,13 +906,13 @@ lottie_startup.addEventListener("complete", () => {
 });
 
 var timeout;
-document.onmousemove = function () {
-  settings_container.style.visibility = "visible";
-  controls_container.style.visibility = "visible";
-  clearTimeout(timeout);
-  timeout = setTimeout(function () {
-    // console.log("move your mouse");
-    settings_container.style.visibility = "hidden";
-    controls_container.style.visibility = "hidden";
-  }, 6000);
-};
+// document.onmousemove = function () {
+//   settings_container.style.visibility = "visible";
+//   controls_container.style.visibility = "visible";
+//   clearTimeout(timeout);
+//   timeout = setTimeout(function () {
+//     // console.log("move your mouse");
+//     settings_container.style.visibility = "hidden";
+//     controls_container.style.visibility = "hidden";
+//   }, 6000);
+// };
