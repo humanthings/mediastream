@@ -198,8 +198,11 @@ function onChangeMode(event) {
     track.stop();
   });
 
-  // Set the solution
-  setShadowCast();
+  // wait for 1 second to stop the stream
+  setTimeout(function () {
+    // Set the video input change
+    setShadowCast();
+  }, 100);
 }
 
 function onModeDropdown() {
@@ -257,10 +260,53 @@ function onModeDropdown() {
 
 function initVideoDropDown() {
   console.log("initVideoDropDown");
+
+  navigator.mediaDevices
+    .enumerateDevices()
+    .then(function (devices) {
+      // console.log(devices);
+      videoDevices = [];
+      audioDevices = [];
+      devices.forEach(function (device) {
+        console
+          .log
+          // device.kind + ": " + device.label + " id = " + device.deviceId
+          ();
+        if (device.kind === "videoinput") {
+          videoDevices.push(device);
+        }
+        if (device.kind === "audioinput") {
+          audioDevices.push(device);
+        }
+      });
+    })
+    .then(function () {
+      console.log("videoDevices :", videoDevices);
+      console.log("videoSelectedID :", videoSelectedID);
+
+      videoDevices.forEach(function (device) {
+        // console.log(device.label + " id = " + device.deviceId);
+        if (device.deviceId === videoSelectedID) {
+          videoSelected = device.label;
+          console.log("Got vdieoDeviceId", videoSelectedID);
+        }
+      });
+
+      if (videoSelected !== null) {
+        document.getElementById("video-items").innerHTML = `            
+    <div
+        class="settings-item--list-item"
+        style="color: rgba(255, 255, 255, 0.8); display: block;"
+        onclick="onChangeMic(event)">
+        ${videoSelected}
+    </div>
+    `;
+      }
+    });
 }
 
 function initMicDropDown() {
-  // console.log("initMicDropDown");
+  console.log("initMicDropDown");
   // console.log("micSelectedID", micSelectedID);
 
   // Get the device lable from id
@@ -284,7 +330,8 @@ function initMicDropDown() {
       });
     })
     .then(function () {
-      // console.log("audioDevices :", audioDevices);
+      console.log("audioDevices :", audioDevices);
+      console.log("micSelectedID :", micSelectedID);
 
       audioDevices.forEach(function (device) {
         // console.log(device.label + " id = " + device.deviceId);
@@ -334,13 +381,22 @@ function onChangeVideo(event) {
   mic_arrow.style.transform = "";
 
   // stop the stream
-  let tracks = mediaStream.getTracks();
-  tracks.forEach(function (track) {
-    track.stop();
-  });
+  if (mediaStream !== null) {
+    try {
+      let tracks = mediaStream.getTracks();
+      tracks.forEach(function (track) {
+        track.stop();
+      });
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+  }
 
-  // Set the solution
-  setShadowCast();
+  // wait for 1 second to stop the stream
+  setTimeout(function () {
+    // Set the video input change
+    setShadowCast();
+  }, 100);
 }
 
 function onChangeMic(event) {
@@ -373,9 +429,22 @@ function onChangeMic(event) {
 }
 
 function onVideoDropdown() {
-  // console.log("onVideoDropdown");
-  // console.log("videoSelectedID", videoSelectedID);
-  // console.log("videoDevices", videoDevices);
+  console.log("onVideoDropdown");
+  console.log("videoSelectedID :", videoSelectedID);
+  console.log("videoDevices :", videoDevices);
+
+  navigator.mediaDevices.enumerateDevices().then(function (devices) {
+    // console.log(devices);
+    videoDevices = [];
+    devices.forEach(function (device) {
+      // console.log(
+      //   device.kind + ": " + device.label + " id = " + device.deviceId
+      // );
+      if (device.kind === "videoinput") {
+        videoDevices.push(device);
+      }
+    });
+  });
 
   let videoDevicesList = "";
   videoDevices.forEach(function (device) {
@@ -400,6 +469,8 @@ function onVideoDropdown() {
       `;
     }
   });
+  // console.log(videoDevicesList);
+
   document.getElementById("video-items").innerHTML = videoDevicesList;
 }
 
@@ -515,20 +586,21 @@ function stopStreamedVideo(videoElem) {
 }
 
 function setShadowCast() {
+  console.log("setShadowCast");
   audioDeviceId = null;
-  videoDeviceId = null;
-  width_value = 1920;
-  height_value = 1080;
-  frame_rate = 60;
+  videoDeviceId = ""; // null;
+  width_value = 1280;
+  height_value = 720;
+  frame_rate = 30;
 
   // This is the resolution for ShadowCast
-  if (modeSelected === "Favor Resolution") {
-    width_value = 1920;
-    height_value = 1080;
-  } else {
-    width_value = 1280;
-    height_value = 720;
-  }
+  // if (modeSelected === "Favor Resolution") {
+  //   width_value = 1920;
+  //   height_value = 1080;
+  // } else {
+  //   width_value = 1280;
+  //   height_value = 720;
+  // }
 
   navigator.mediaDevices
     .enumerateDevices()
@@ -562,50 +634,50 @@ function setShadowCast() {
             console.log("Got videoSelectedID", videoSelectedID);
             videoDeviceId = videoSelectedID;
             console.log("changed ID", videoDeviceId);
-          } else {
-            console.log("Got original ", videoDeviceId);
           }
+
+          width_value = 1920;
+          height_value = 1080;
+          frame_rate = 60;
         }
 
         // This is the check if the ShadowCast 2 (Pro) is connected
-        if (device.label?.toLowerCase()?.includes("shadowcast 2")) {
-          shadowcastType = "shadowcast 2";
-
-          if (modeSelected === "Favor Resolution") {
-            width_value = 2560; // Set the 2K
-            height_value = 1440;
-            frame_rate = 30;
-          } else {
-            width_value = 1920;
-            height_value = 1080;
-            frame_rate = 60;
+        if (videoSelectedID === "") {
+          if (device.label?.toLowerCase()?.includes("shadowcast 2")) {
+            shadowcastType = "shadowcast 2";
+            if (modeSelected === "Favor Resolution") {
+              width_value = 2560; // Set the 2K
+              height_value = 1440;
+              frame_rate = 30;
+            } else {
+              width_value = 1920;
+              height_value = 1080;
+              frame_rate = 60;
+            }
+          }
+          if (device.label?.toLowerCase()?.includes("shadowcast 2 pro")) {
+            shadowcastType = "shadowcast 2 pro";
+            if (modeSelected === "Favor Resolution") {
+              width_value = 3840; // Set the 4K
+              height_value = 2160;
+              frame_rate = 60;
+            } else {
+              width_value = 1920;
+              height_value = 1080;
+              frame_rate = 60;
+            }
           }
         }
-
-        if (device.label?.toLowerCase()?.includes("shadowcast 2 pro")) {
-          shadowcastType = "shadowcast 2 pro";
-
-          if (modeSelected === "Favor Resolution") {
-            width_value = 3840; // Set the 4K
-            height_value = 2160;
-            frame_rate = 60;
-          } else {
-            width_value = 1920;
-            height_value = 1080;
-            frame_rate = 60;
-          }
-        }
-
-        // console.log(
-        //   "Resolution selected: ",
-        //   width_value,
-        //   height_value,
-        //   frame_rate
-        // );
       });
     })
     .then(() => {
-      console.log("Before change", videoDeviceId);
+      console.log(
+        "Resolution selected: ",
+        width_value,
+        height_value,
+        frame_rate
+      );
+      console.log("Before change getUserMedia :", videoDeviceId);
 
       // from https://github.com/humanthings/genki-arcade-web/blob/master/src/hooks/useMediaStream.ts#L61
       navigator.mediaDevices
@@ -892,7 +964,7 @@ navigator.mediaDevices.addEventListener("devicechange", startup, false);
 
 // initModeDropdown();
 
-initVideoDropDown();
+// initVideoDropDown();
 
 initMicDropDown();
 
