@@ -21,8 +21,8 @@ let videoDevices = [];
 let audioDevices = [];
 let videoSelected = null;
 let videoSelectedID = "";
-let resolutionSelected = "";
-let framerateSelected = "";
+let resolutionSelected = "1920 x 1080";
+let framerateSelected = "60";
 let micSelected = null;
 let micSelectedID = "default";
 let useMic = false; // if the mic button is clicked
@@ -293,21 +293,47 @@ function initVideoDropDown() {
         // console.log(device.label + " id = " + device.deviceId);
         if (device.deviceId === videoSelectedID) {
           videoSelected = device.label;
-          console.log("Got vdieoDeviceId", videoSelectedID);
+          console.log("Got vdieoDeviceId in initial", videoSelectedID);
         }
       });
 
       if (videoSelected !== null) {
         document.getElementById("video-items").innerHTML = `            
-    <div
-        class="settings-item--list-item"
-        style="color: rgba(255, 255, 255, 0.8); display: block;"
-        onclick="onChangeMic(event)">
-        ${videoSelected}
-    </div>
+          <div
+              class="settings-item--list-item"
+              style="color: rgba(255, 255, 255, 0.8); display: block;"
+              onclick="onChangeMic(event)">
+              ${videoSelected}
+          </div>
     `;
       }
     });
+}
+
+function initResolutionDropdown() {
+  if (resolutionSelected !== "") {
+    document.getElementById("resolution-items").innerHTML = `            
+    <div
+        class="settings-item--list-item"
+        style="color: rgba(255, 255, 255, 0.8); display: block;"
+        onclick="onChangeResolution(event)">
+        ${resolutionSelected}
+    </div>  
+    `;
+  }
+}
+
+function initFramerateDropdown() {
+  if (resolutionSelected !== "") {
+    document.getElementById("framerate-items").innerHTML = `            
+    <div
+        class="settings-item--list-item"
+        style="color: rgba(255, 255, 255, 0.8); display: block;"
+        onclick="onChangeFramerate(event)">
+        ${framerateSelected}
+    </div>  
+    `;
+  }
 }
 
 function initMicDropDown() {
@@ -564,7 +590,13 @@ function onVideoDropdown() {
 
 function onResolutionDropdown() {
   console.log("onResolutionDropdown");
-  resolution = ["3840 x 2160", "2560 x 1440", "1920 x 1080", "1280 x 720"];
+  resolution = [
+    "3840 x 2160",
+    "2560 x 1440",
+    "1920 x 1080",
+    "1280 x 720",
+    "640 x 480",
+  ];
   console.log(resolution);
 
   if (resolution_arrow.style.transform == "") {
@@ -749,9 +781,6 @@ function setShadowCast() {
   console.log("setShadowCast");
   audioDeviceId = null;
   videoDeviceId = ""; // null;
-  // width_value = 1280;
-  // height_value = 720;
-  // frame_rate = 30;
   console.log("resolutionSelected: ", resolutionSelected);
   console.log("framerateSelected: ", framerateSelected);
   width_value = resolutionSelected.split(" x ")[0];
@@ -793,11 +822,11 @@ function setShadowCast() {
           // Get the video ID
           if (device.kind === "videoinput") {
             videoDeviceId = device.deviceId;
+            videoSelectedID = device.deviceId;
             // console.log(videoDeviceId);
-
-            width_value = 1920;
-            height_value = 1080;
-            frame_rate = 60;
+            // width_value = 1920;
+            // height_value = 1080;
+            // frame_rate = 30;
           }
 
           // If the not video input is selected, then use the default ShadowCast video device
@@ -809,38 +838,38 @@ function setShadowCast() {
         }
 
         // This is the check if the ShadowCast 2 (Pro) is connected
-        if (videoSelectedID === "") {
-          if (
-            device.label?.toLowerCase()?.includes("shadowcast 2") &
-            (device.kind === "videoinput")
-          ) {
-            shadowcastType = "shadowcast 2";
-            if (modeSelected === "Favor Resolution") {
-              width_value = 2560; // Set the 2K
-              height_value = 1440;
-              frame_rate = 30;
-            } else {
-              width_value = 1920;
-              height_value = 1080;
-              frame_rate = 60;
-            }
-          }
-          if (
-            device.label?.toLowerCase()?.includes("shadowcast 2 pro") &
-            (device.kind === "videoinput")
-          ) {
-            shadowcastType = "shadowcast 2 pro";
-            if (modeSelected === "Favor Resolution") {
-              width_value = 3840; // Set the 4K
-              height_value = 2160;
-              frame_rate = 60;
-            } else {
-              width_value = 1920;
-              height_value = 1080;
-              frame_rate = 60;
-            }
-          }
-        }
+        // if (videoSelectedID === "") {
+        //   if (
+        //     device.label?.toLowerCase()?.includes("shadowcast 2") &
+        //     (device.kind === "videoinput")
+        //   ) {
+        //     shadowcastType = "shadowcast 2";
+        //     if (modeSelected === "Favor Resolution") {
+        //       width_value = 2560; // Set the 2K
+        //       height_value = 1440;
+        //       frame_rate = 30;
+        //     } else {
+        //       width_value = 1920;
+        //       height_value = 1080;
+        //       frame_rate = 30;
+        //     }
+        //   }
+        //   if (
+        //     device.label?.toLowerCase()?.includes("shadowcast 2 pro") &
+        //     (device.kind === "videoinput")
+        //   ) {
+        //     shadowcastType = "shadowcast 2 pro";
+        //     if (modeSelected === "Favor Resolution") {
+        //       width_value = 3840; // Set the 4K
+        //       height_value = 2160;
+        //       frame_rate = 60;
+        //     } else {
+        //       width_value = 1920;
+        //       height_value = 1080;
+        //       frame_rate = 60;
+        //     }
+        //   }
+        // }
       });
     })
     .then(() => {
@@ -1138,6 +1167,10 @@ navigator.mediaDevices.addEventListener("devicechange", startup, false);
 // initModeDropdown();
 
 initVideoDropDown();
+
+initResolutionDropdown();
+
+initFramerateDropdown();
 
 initMicDropDown();
 
