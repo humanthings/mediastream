@@ -427,7 +427,7 @@ function onChangeVideo(event) {
   setTimeout(function () {
     // Set the video input change
     setShadowCast();
-  }, 1000);
+  }, 100);
 }
 
 function onChangeResolution(event) {
@@ -822,7 +822,17 @@ function setShadowCast() {
           // Get the video ID
           if (device.kind === "videoinput") {
             videoDeviceId = device.deviceId;
-            videoSelectedID = device.deviceId;
+            shadowcastType = "shadowcast";
+
+            if (device.label?.toLowerCase()?.includes("shadowcast 2")) {
+              shadowcastType = "shadowcast 2";
+            }
+
+            if (device.label?.toLowerCase()?.includes("shadowcast 2 pro")) {
+              shadowcastType = "shadowcast 2 pro";
+            }
+
+            // videoSelectedID = device.deviceId;
             // console.log(videoDeviceId);
             // width_value = 1920;
             // height_value = 1080;
@@ -830,6 +840,7 @@ function setShadowCast() {
           }
 
           // If the not video input is selected, then use the default ShadowCast video device
+          // Override the videoDeviceId with the selected video device by the user
           if (videoSelectedID !== "") {
             console.log("Got videoSelectedID", videoSelectedID);
             videoDeviceId = videoSelectedID;
@@ -879,6 +890,9 @@ function setShadowCast() {
         height_value,
         frame_rate
       );
+
+      // videoDeviceId =
+      //   "4be6e747da686a4db1c8d635063edf5c1de75ebd778ba731ab61fa4f1c010480";
       console.log("Before change getUserMedia :", videoDeviceId);
 
       // from https://github.com/humanthings/genki-arcade-web/blob/master/src/hooks/useMediaStream.ts#L61
