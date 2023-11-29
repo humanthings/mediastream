@@ -668,7 +668,7 @@ function onFrameRateDropdown() {
   console.log("onFrameRateDropdown");
   framerate = ["60", "50", "40", "30", "25", "20", "15", "10"];
   if (shadowcastType === "shadowcast 2 pro") {
-    console.log("shadowcast 2 got");
+    console.log("shadowcast 2 pro got");
     framerate = [
       "258",
       "240",
@@ -684,6 +684,13 @@ function onFrameRateDropdown() {
       "10",
       "5",
     ];
+  }
+
+  if (shadowcastType === "shadowcast 2") {
+    console.log("shadowcast 2 got");
+    if (resolutionSelected === "2560 x 1440") {
+      framerate = ["30", "25", "20", "15", "10", "5"];
+    }
   }
 
   console.log(framerate);
