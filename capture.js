@@ -595,7 +595,14 @@ function onResolutionDropdown() {
     "3840 x 2160",
     "2560 x 1440",
     "1920 x 1080",
+    "1360 x 768",
+    "1280 x 1024",
+    "1280 x 960",
     "1280 x 720",
+    "1024 x 768",
+    "800 x 600",
+    "720 x 576",
+    "720 x 480",
     "640 x 480",
   ];
   console.log("onResolutionDropdown :", shadowcastType);
@@ -604,9 +611,15 @@ function onResolutionDropdown() {
     resolution = [
       "3840 x 2160",
       "2560 x 1440",
+      "2560 x 1080",
       "1920 x 1080",
+      "1360 x 768",
+      "1280 x 1024",
       "1280 x 720",
-      "640 x 480",
+      "1024 x 768",
+      "800 x 600",
+      "720 x 768",
+      "720 x 480",
     ];
   }
   if (shadowcastType === "shadowcast 2") {
@@ -653,7 +666,26 @@ function onResolutionDropdown() {
 
 function onFrameRateDropdown() {
   console.log("onFrameRateDropdown");
-  framerate = ["60", "30"];
+  framerate = ["60", "50", "40", "30", "25", "20", "15", "10"];
+  if (shadowcastType === "shadowcast 2") {
+    console.log("shadowcast 2 got");
+    framerate = [
+      "258",
+      "240",
+      "144",
+      "120",
+      "60",
+      "50",
+      "40",
+      "30",
+      "25",
+      "20",
+      "15",
+      "10",
+      "5",
+    ];
+  }
+
   console.log(framerate);
 
   if (framerate_arrow.style.transform == "") {
