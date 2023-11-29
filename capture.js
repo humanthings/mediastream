@@ -672,7 +672,6 @@ function onFrameRateDropdown() {
     console.log("shadowcast 2 pro got");
     if (resolutionSelected === "1920 x 1080") {
       framerate = [
-        "258",
         "240",
         "144",
         "120",
