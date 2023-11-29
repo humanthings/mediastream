@@ -667,7 +667,7 @@ function onResolutionDropdown() {
 function onFrameRateDropdown() {
   console.log("onFrameRateDropdown");
   framerate = ["60", "50", "40", "30", "25", "20", "15", "10"];
-  if (shadowcastType === "shadowcast 2") {
+  if (shadowcastType === "shadowcast 2 pro") {
     console.log("shadowcast 2 got");
     framerate = [
       "258",
@@ -971,37 +971,37 @@ function setShadowCast() {
           },
         })
         .then((stream) => {
-          // if (audioDeviceId && videoDeviceId) {
-          video.srcObject = stream;
+          if (audioDeviceId && videoDeviceId) {
+            video.srcObject = stream;
 
-          document.body.style.backgroundImage = "none";
-          btn_go_to_website.style.visibility = "hidden";
-          btn_sologans.style.visibility = "hidden";
-          settings_container.style.visibility = "visible";
-          controls_container.style.visibility = "visible";
-          video.style.display = "block"; // Display the video container
+            document.body.style.backgroundImage = "none";
+            btn_go_to_website.style.visibility = "hidden";
+            btn_sologans.style.visibility = "hidden";
+            settings_container.style.visibility = "visible";
+            controls_container.style.visibility = "visible";
+            video.style.display = "block"; // Display the video container
 
-          // Set the video volume
-          video.volume = volume / 100;
+            // Set the video volume
+            video.volume = volume / 100;
 
-          video.play(); // Must not use the autoplay attribute in html
+            video.play(); // Must not use the autoplay attribute in html
 
-          console.log("video started");
+            console.log("video started");
 
-          // Set mediaStram global variable
-          mediaStream = stream;
+            // Set mediaStram global variable
+            mediaStream = stream;
 
-          // console.log(mediaStream);
-          // } else {
-          //   document.body.style.backgroundImage =
-          //     "url('./assets/images/background.jpg')";
-          //   video.style.display = "none";
-          //   btn_go_to_website.style.visibility = "visible";
-          //   btn_sologans.style.visibility = "visible";
-          //   settings_container.style.visibility = "hidden";
-          //   controls_container.style.visibility = "hidden";
-          //   console.log("Can't find the ShadowCast device");
-          // }
+            console.log(mediaStream);
+          } else {
+            document.body.style.backgroundImage =
+              "url('./assets/images/background.jpg')";
+            video.style.display = "none";
+            btn_go_to_website.style.visibility = "visible";
+            btn_sologans.style.visibility = "visible";
+            settings_container.style.visibility = "hidden";
+            controls_container.style.visibility = "hidden";
+            console.log("Can't find the ShadowCast device");
+          }
         })
         .catch(console.error);
     })
@@ -1252,13 +1252,13 @@ lottie_startup.addEventListener("complete", () => {
 });
 
 var timeout;
-// document.onmousemove = function () {
-//   settings_container.style.visibility = "visible";
-//   controls_container.style.visibility = "visible";
-//   clearTimeout(timeout);
-//   timeout = setTimeout(function () {
-//     // console.log("move your mouse");
-//     settings_container.style.visibility = "hidden";
-//     controls_container.style.visibility = "hidden";
-//   }, 6000);
-// };
+document.onmousemove = function () {
+  settings_container.style.visibility = "visible";
+  controls_container.style.visibility = "visible";
+  clearTimeout(timeout);
+  timeout = setTimeout(function () {
+    // console.log("move your mouse");
+    settings_container.style.visibility = "hidden";
+    controls_container.style.visibility = "hidden";
+  }, 6000);
+};
