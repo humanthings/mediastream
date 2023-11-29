@@ -667,23 +667,28 @@ function onResolutionDropdown() {
 function onFrameRateDropdown() {
   console.log("onFrameRateDropdown");
   framerate = ["60", "50", "40", "30", "25", "20", "15", "10"];
+
   if (shadowcastType === "shadowcast 2 pro") {
     console.log("shadowcast 2 pro got");
-    framerate = [
-      "258",
-      "240",
-      "144",
-      "120",
-      "60",
-      "50",
-      "40",
-      "30",
-      "25",
-      "20",
-      "15",
-      "10",
-      "5",
-    ];
+    if (resolutionSelected === "1920 x 1080") {
+      framerate = [
+        "258",
+        "240",
+        "144",
+        "120",
+        "60",
+        "50",
+        "40",
+        "30",
+        "25",
+        "20",
+        "15",
+        "10",
+        "5",
+      ];
+    } else {
+      framerate = ["60", "50", "30", "25"];
+    }
   }
 
   if (shadowcastType === "shadowcast 2") {
