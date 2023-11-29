@@ -311,8 +311,8 @@ function initVideoDropDown() {
 }
 
 function initResolutionDropdown() {
-  if (resolutionSelected !== "") {
-    document.getElementById("resolution-items").innerHTML = `            
+  // if (resolutionSelected !== "") {
+  document.getElementById("resolution-items").innerHTML = `            
     <div
         class="settings-item--list-item"
         style="color: rgba(255, 255, 255, 0.8); display: block;"
@@ -320,12 +320,13 @@ function initResolutionDropdown() {
         ${resolutionSelected}
     </div>  
     `;
-  }
+  // }
 }
 
 function initFramerateDropdown() {
-  if (resolutionSelected !== "") {
-    document.getElementById("framerate-items").innerHTML = `            
+  console.log("initFramerateDropdown");
+  // if (resolutionSelected !== "") {
+  document.getElementById("framerate-items").innerHTML = `            
     <div
         class="settings-item--list-item"
         style="color: rgba(255, 255, 255, 0.8); display: block;"
@@ -333,7 +334,7 @@ function initFramerateDropdown() {
         ${framerateSelected}
     </div>  
     `;
-  }
+  // }
 }
 
 function initMicDropDown() {
@@ -597,12 +598,31 @@ function onResolutionDropdown() {
     "1280 x 720",
     "640 x 480",
   ];
+  console.log("onResolutionDropdown :", shadowcastType);
+  if (shadowcastType === "shadowcast 2 pro") {
+    console.log("shadowcast 2 pro got");
+    resolution = [
+      "3840 x 2160",
+      "2560 x 1440",
+      "1920 x 1080",
+      "1280 x 720",
+      "640 x 480",
+    ];
+  }
+  if (shadowcastType === "shadowcast 2") {
+    console.log("shadowcast 2 got");
+    resolution = ["2560 x 1440", "1920 x 1080", "1280 x 720", "640 x 480"];
+  }
+  if (shadowcastType === "shadowcast") {
+    console.log("shadowcast got");
+    resolution = ["1920 x 1080", "1280 x 720", "640 x 480"];
+  }
   console.log(resolution);
 
   if (resolution_arrow.style.transform == "") {
     let resolutionList = "";
     resolution.forEach(function (resol) {
-      console.log(resol);
+      // console.log(resol);
       if (resol === resolutionSelected) {
         resolutionList += `
       <div
@@ -626,6 +646,7 @@ function onResolutionDropdown() {
     document.getElementById("resolution-items").innerHTML = resolutionList;
     resolution_arrow.style.transform = "rotate(180deg)";
   } else {
+    initResolutionDropdown();
     resolution_arrow.style.transform = "";
   }
 }
@@ -662,6 +683,7 @@ function onFrameRateDropdown() {
     document.getElementById("framerate-items").innerHTML = framerateList;
     framerate_arrow.style.transform = "rotate(180deg)";
   } else {
+    initFramerateDropdown();
     framerate_arrow.style.transform = "";
   }
 }
