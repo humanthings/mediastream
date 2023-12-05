@@ -1,6 +1,5 @@
 // Based on the youtube video
 // https://www.youtube.com/watch?v=Hc7GE3ENz7k
-
 const video = document.getElementById("video");
 document.body.style.backgroundImage = "url('./assets/images/background.jpg')";
 let audioDeviceId = null;
@@ -45,27 +44,29 @@ function setLanguage(lang) {
   }
 
   // Disable the translate of menu items for testing.
-  // fetch(`./assets/translations/${file}.json`).then((response) => {
-  //   // console.log(response);
-  //   response.json().then((data) => {
-  //     // console.log(data.FAVOR_PERFOMANCE);
-  //     // return data;
-  //     header_title = document.getElementsByClassName(
-  //       "settings-item--header-title"
-  //     );
+  fetch(`./assets/translations/${file}.json`).then((response) => {
+    // console.log(response);
+    response.json().then((data) => {
+      // console.log(data.FAVOR_PERFOMANCE);
+      // return data;
+      header_title = document.getElementsByClassName(
+        "settings-item--header-title"
+      );
 
-  //     header_title[0].innerText = data.MODE;
-  //     header_title[1].innerText = data.MICROPHONE;
-  //     header_title[2].innerText = data.VOLUME;
-  //     header_title[3].innerText = data.CREDITS;
-  //     header_title[4].innerText = data.LANGUAGE;
-  //     // Array.from(header_title).forEach((title) => {
-  //     //   console.log(title.childNodes[0]);
-  //     //   title.innerText = data.MODE;
-  //     //   console.log(data.MODE);
-  //     // });
-  //   });
-  // });
+      header_title[0].innerText = data.VIDEO;
+      header_title[1].innerText = data.RESOLUTION;
+      header_title[2].innerText = data.FRAMERATE;
+      header_title[3].innerText = data.MICROPHONE;
+      header_title[4].innerText = data.VOLUME;
+      header_title[5].innerText = data.CREDITS;
+      header_title[6].innerText = data.LANGUAGE;
+      // Array.from(header_title).forEach((title) => {
+      //   console.log(title.childNodes[0]);
+      //   title.innerText = data.MODE;
+      //   console.log(data.MODE);
+      // });
+    });
+  });
 }
 
 function initLangDropdown() {
@@ -903,14 +904,15 @@ function setShadowCast() {
             // height_value = 1080;
             // frame_rate = 30;
           }
-
-          // If the not video input is selected, then use the default ShadowCast video device
-          // Override the videoDeviceId with the selected video device by the user
-          if (videoSelectedID !== "") {
-            console.log("Got videoSelectedID", videoSelectedID);
-            videoDeviceId = videoSelectedID;
-            console.log("changed ID", videoDeviceId);
-          }
+        }
+        // If the not video input is selected, then use the default ShadowCast video device
+        // Override the videoDeviceId with the selected video device by the user
+        if (videoSelectedID !== "") {
+          console.log("Got videoSelectedID", videoSelectedID);
+          videoDeviceId = videoSelectedID;
+          // console.log("changed ID", videoDeviceId);
+          // If video is selected, then use the mic selected as well. no matter if the mic button is clicked or not.
+          audioDeviceId = micSelectedID;
         }
 
         // This is the check if the ShadowCast 2 (Pro) is connected
@@ -959,6 +961,7 @@ function setShadowCast() {
       // videoDeviceId =
       //   "4be6e747da686a4db1c8d635063edf5c1de75ebd778ba731ab61fa4f1c010480";
       console.log("Before change getUserMedia :", videoDeviceId);
+      console.log("Before change getUserMedia :", audioDeviceId);
 
       // from https://github.com/humanthings/genki-arcade-web/blob/master/src/hooks/useMediaStream.ts#L61
       navigator.mediaDevices
@@ -1015,6 +1018,10 @@ function setShadowCast() {
           }
         })
         .catch(console.error);
+      // .catch((err) => {
+      //   console.error;
+      //   console.log("getstream failed");
+      // });
     })
     .catch((err) => {
       console.error(`${err.name}: ${err.message}`);
