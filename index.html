@@ -5,9 +5,9 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ShadowCast</title>
+  <title>Genki Arcade</title>
   <link rel="stylesheet" href="style.css" type="text/css" />
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/ffmpeg/0.11.6/ffmpeg.min.js"></script> -->
+  <link rel="manifest" href="/manifest.json">
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <script async src="capture.js"></script>
 </head>
@@ -21,15 +21,6 @@
 
   <div id="settings_container" class="settings--container" style="left: 0; visibility: visible">
     <div style="height: 5"></div>
-
-    <!-- <div class="settings-item--container">
-          <div class="settings-item--header" onclick="onModeDropdown()">
-            <div class="settings-item--header-title">Mode</div>
-            <img id="mode-arrow" src="./assets/icons/arrow_down.svg" />
-          </div>
-          <div id="mode-items"></div>
-        </div> -->
-
     <div class="settings-item--container">
       <div class="settings-item--header" onclick="onVideoDropdown()">
         <div class="settings-item--header-title">Video</div>
@@ -174,6 +165,17 @@
           left: 50%;
           transform: translate(-50%, -50%);
         " autoplay></lottie-player>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(function(registration) {
+        console.log('Service Worker registered with scope:', registration.scope);
+      }).catch(function(error) {
+        console.log('Service Worker registration failed:', error);
+      });
+  }
+</script>
+
 </body>
 
 </html>
