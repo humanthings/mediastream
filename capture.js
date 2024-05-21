@@ -8,7 +8,7 @@ let videoDeviceId = null;
 let chunks = [];
 let mediaRecorder;
 let mediaStream;
-let modeSelected = "Favor Resolution";
+let modeSelected = "Favor Mesholution"; // change
 let mode_arrow = document.getElementById("mode-arrow");
 let video_arrow = document.getElementById("video-arrow");
 let resolution_arrow = document.getElementById("resolution-arrow");
