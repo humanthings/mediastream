@@ -8,7 +8,7 @@ let videoDeviceId = null;
 let chunks = [];
 let mediaRecorder;
 let mediaStream;
-let modeSelected = "Favor Mesholution"; // change
+let modeSelected = "Favor Resolution";
 let mode_arrow = document.getElementById("mode-arrow");
 let video_arrow = document.getElementById("video-arrow");
 let resolution_arrow = document.getElementById("resolution-arrow");
@@ -167,7 +167,7 @@ function initModeDropdown() {
         class="settings-item--list-item"
         style="color: rgba(255, 255, 255, 0.8); display: block;"
         onclick="onChangeMode(event)">
-        Favor Performance
+        Favor Mesholution
     </div>
     `;
   } else if (modeSelected === "Favor Resolution") {
